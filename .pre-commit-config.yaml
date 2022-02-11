@@ -29,6 +29,4 @@ repos:
     - id: mypy
       name: mypy-strict
       args: ["--config-file=tox.ini", "--strict", "--implicit-reexport", "--allow-any-generics"]
-      files: "^api/domain/.*"
-      exclude: "^unit_test"
       additional_dependencies: [tokenize-rt==3.2.0]
