@@ -1,0 +1,34 @@
+repos:
+-   repo: https://github.com/pycqa/isort
+    rev: 5.5.4
+    hooks:
+    - id: isort
+      args: ["--profile", "black"]
+      exclude: ^app.py
+-   repo: https://github.com/ambv/black
+    rev: 20.8b1
+    hooks:
+    - id: black
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.3.0
+    hooks:
+    -   id: check-yaml
+        args: [--allow-multiple-documents]
+        exclude: ^.helm
+    -   id: end-of-file-fixer
+    -   id: trailing-whitespace
+    -   id: mixed-line-ending
+-   repo: https://gitlab.com/pycqa/flake8
+    rev: '3.8.3'
+    hooks:
+    - id: flake8
+      args: ["--config=tox.ini", "--tee"]
+-   repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v0.790
+    hooks:
+    - id: mypy
+      name: mypy-strict
+      args: ["--config-file=tox.ini", "--strict", "--implicit-reexport", "--allow-any-generics"]
+      files: "^api/domain/.*"
+      exclude: "^unit_test"
+      additional_dependencies: [tokenize-rt==3.2.0]
