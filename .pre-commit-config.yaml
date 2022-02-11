@@ -4,7 +4,6 @@ repos:
     hooks:
     - id: isort
       args: ["--profile", "black"]
-      exclude: ^app.py
 -   repo: https://github.com/ambv/black
     rev: 20.8b1
     hooks:
