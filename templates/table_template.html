@@ -1,0 +1,9 @@
+<table>
+    {% for row in cards %}
+    <TR>
+        {% for card in row %}
+       <TD>{{card}}</TD>
+        {% endfor %}
+    </TR>
+    {% endfor %}
+</table>
