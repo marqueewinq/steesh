@@ -64,4 +64,14 @@ for card_page in sliced_card_lst:
         fh.write(generate_table_html(card_page))
     i += 1
 for j in range(i):
-    pdfkit.from_file(str(j) + "out.html", str(j) + output)
+    pdfkit.from_file(
+        str(j) + "out.html",
+        str(j) + output,
+        options={
+            "--lowquality": "",
+            "--margin-bottom": "0mm",
+            "--margin-left": "0mm",
+            "--margin-right": "0mm",
+            "--margin-top": "0mm",
+        },
+    )
