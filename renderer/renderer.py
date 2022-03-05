@@ -7,29 +7,68 @@ import pdfkit
 import tempfile
 import os
 import re
+import csv
   
 templateLoader = jinja2.FileSystemLoader(searchpath="./")
 templateEnv = jinja2.Environment(loader=templateLoader)
 
+def check_if_file(path: str)->None:
+    if not os.path.isfile(path):
+        if os.path.isdir(path):
+            raise IsADirectoryError(f'"{path}" is a directory, not file')
+        raise FileNotFoundError(f'File "{path}" not found')
+
+
 def read_library(path: str) -> Dict:
-    ws = openpyxl.load_workbook(path).worksheets[0].rows
-    keys = [cell.value.replace(" ", "_") for cell in next(ws)]
-    return dict(
-        map(lambda dic: (dic['Name'], dic),
-        map(
+    iter_of_cards_dicts=[]
+    check_if_file(path)
+    if path.endswith('.xlsx'):
+        rows = openpyxl.load_workbook(path).worksheets[0].rows
+        keys = ([cell.value.replace(" ", "_") if cell.value else cell.value for cell in next(rows)])
+        print(list(keys))
+        iter_of_cards_dicts=map(
             lambda row: dict(
-                zip(keys, [cell.value if cell.value != "-" else "" for cell in row])
+                zip(keys, [cell.value if (cell.value != "-" or cell.value==None) else "" for cell in row])
             ),
-            ws,
+            rows,
         )
+    elif path.endswith('.csv'):
+        rows=csv.reader(open(path))
+        keys = [cell.replace(" ", "_") for cell in next(rows)]
+        iter_of_cards_dicts=map(
+            lambda row: dict(
+                zip(keys, [cell if cell != "-" else "" for cell in row])
+            ),
+            rows,
+        )
+    else:
+        raise ValueError('Can\'t read from file of this format for now')  
+    print('k:',list(iter_of_cards_dicts))  
+    if not keys or not iter_of_cards_dicts:
+        raise ValueError('Library is empty')
+    if None in keys or '' in keys:
+        raise ValueError('Column name can\'t be empty')
+    dd = dict(
+        map(lambda dic: (dic['Name'], dic),
+        iter_of_cards_dicts
         )
     )
 
-def read_deck(path) -> List:
+    return dd
+
+def read_deck(path: str) -> List:
     ret_lst = []
+    check_if_file(path)
     with open(path, 'r') as deck:
-        for line in deck.readlines():
-            ret_lst.append(re.search('(\d+) (.+)$',line).groups())
+        for ind_and_line in enumerate(deck.readlines()):
+            
+            mtch = re.search(r'(\d+) (.*)$',ind_and_line[1])
+            if mtch:
+                ret_lst.append(mtch.groups())
+            else:
+                raise ValueError(f'Wrong input format in file "{path}" in line {ind_and_line[0]}')
+    if not ret_lst:
+        raise ValueError('Deck is empty')
     return ret_lst
 
 def render_card_html(library_dict: dict, template_file: str) -> Text:
@@ -59,7 +98,7 @@ def generate_tables_of_cards(library_dict: dict, deck: List, template_path: Text
     cards_table = get_sliced_lst(get_sliced_lst(cards_list))
     return cards_table
 
-def render_pdf_from_html_tables(html_tables_list: List, output: str):
+def render_pdf_from_html_tables(html_tables_list: List, output: str) -> None:
     with tempfile.TemporaryDirectory() as td:
         pdfs = []
         for ind_and_table in enumerate(html_tables_list):
