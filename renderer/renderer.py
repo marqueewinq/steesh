@@ -43,7 +43,7 @@ def read_library(path: str) -> Dict:
         ))
     else:
         raise ValueError('Can\'t read from file of this format for now')
-    print(keys)
+    
     if not keys or not list_of_cards_dicts:
         raise ValueError('Library is empty')
     if None in keys or '' in keys:
@@ -53,7 +53,7 @@ def read_library(path: str) -> Dict:
         list_of_cards_dicts
         )
     )
-    print(dd)
+    
     return dd
 
 def read_deck(path: str) -> List:
@@ -63,11 +63,13 @@ def read_deck(path: str) -> List:
         for ind_and_line in enumerate(deck.readlines()):
             
             mtch = re.search(r'(\d+) (.*)$',ind_and_line[1])
+            print(mtch)
             if mtch:
                 ret_lst.append(mtch.groups())
                 
             else:
                 raise ValueError(f'Wrong input format in file "{path}" in line {ind_and_line[0]}')
+            
     if not ret_lst:
         raise ValueError('Deck is empty')
     return ret_lst
@@ -93,7 +95,10 @@ def get_sliced_lst(lst: List) -> List[List]:
 def generate_tables_of_cards(library_dict: dict, deck: List, template_path: Text) -> List[List]:
     cards_jinja_dicts = []
     for card in deck:
-        cards_jinja_dicts += [library_dict[card[1]]]*int(card[0])
+        try:
+            cards_jinja_dicts += [library_dict[card[1]]]*int(card[0])
+        except KeyError:
+            raise ValueError(f'Card "{card}" is not in the library')
     cards_list = list(map(lambda card: render_card_html(card, template_path), cards_jinja_dicts))
     cards_list += [""] * ((9 - len(cards_list) % 9) % 9)
     cards_table = get_sliced_lst(get_sliced_lst(cards_list))

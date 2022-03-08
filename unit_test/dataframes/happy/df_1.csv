@@ -1,3 +1,7 @@
 ID,Name,Type,Qty,Module,Cost,Power,Text,Image,Tags,Version Tag
 5,Healer Dork,Creature,2,Nature,1,1,"Whenever another permanent you control enters, gain 1 life.
 Action, tap, pay 1 life: gain 1 mana; Priority.",https://99px.ru/sstorage/56/2013/06/10306130220478230.jpg,"Heal, Mana, PayLife, Ability",1
+14,Regrowth,Action,1,Nature,1,-,"Fuel -- return target card from your discard to your hand.
+Choose two (you can choose each mode multiple times):
+ - return target card from any discard to it's owner's hand;
+ - remove target card from any discard.",https://c4.wallpaperflare.com/wallpaper/773/817/71/green-light-sake-girl-wallpaper-preview.jpg,"Fuel, Recursion, Gravehate",3
