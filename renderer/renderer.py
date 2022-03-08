@@ -20,40 +20,40 @@ def check_if_file(path: str)->None:
 
 
 def read_library(path: str) -> Dict:
-    iter_of_cards_dicts=[]
+    list_of_cards_dicts=[]
     check_if_file(path)
     if path.endswith('.xlsx'):
         rows = openpyxl.load_workbook(path).worksheets[0].rows
         keys = ([cell.value.replace(" ", "_") if cell.value else cell.value for cell in next(rows)])
-        print(list(keys))
-        iter_of_cards_dicts=map(
+        list_of_cards_dicts=list(map(
             lambda row: dict(
                 zip(keys, [cell.value if (cell.value != "-" or cell.value==None) else "" for cell in row])
             ),
             rows,
-        )
+        ))
+        list_of_cards_dicts = list(filter(lambda dic: dic.get('Name'), list_of_cards_dicts))
     elif path.endswith('.csv'):
         rows=csv.reader(open(path))
         keys = [cell.replace(" ", "_") for cell in next(rows)]
-        iter_of_cards_dicts=map(
+        list_of_cards_dicts=list(map(
             lambda row: dict(
                 zip(keys, [cell if cell != "-" else "" for cell in row])
             ),
             rows,
-        )
+        ))
     else:
-        raise ValueError('Can\'t read from file of this format for now')  
-    print('k:',list(iter_of_cards_dicts))  
-    if not keys or not iter_of_cards_dicts:
+        raise ValueError('Can\'t read from file of this format for now')
+    print(keys)
+    if not keys or not list_of_cards_dicts:
         raise ValueError('Library is empty')
     if None in keys or '' in keys:
         raise ValueError('Column name can\'t be empty')
     dd = dict(
         map(lambda dic: (dic['Name'], dic),
-        iter_of_cards_dicts
+        list_of_cards_dicts
         )
     )
-
+    print(dd)
     return dd
 
 def read_deck(path: str) -> List:
@@ -65,6 +65,7 @@ def read_deck(path: str) -> List:
             mtch = re.search(r'(\d+) (.*)$',ind_and_line[1])
             if mtch:
                 ret_lst.append(mtch.groups())
+                
             else:
                 raise ValueError(f'Wrong input format in file "{path}" in line {ind_and_line[0]}')
     if not ret_lst:
@@ -122,7 +123,7 @@ def render_pdf_from_html_tables(html_tables_list: List, output: str) -> None:
         merger.write(output)
         merger.close()
 
-def render_page_cli(library_path='dataframes/test_dataframe.xlsx', deck_path='decks/test_deck.txt', template_path = "templates/test_card_template.html", output='out.pdf') -> None:
+def render_page_cli(library_path='dataframes/test_dataframe.csv', deck_path='decks/test_deck.txt', template_path = "templates/test_card_template.html", output='out.pdf') -> None:
   library_dict = read_library(library_path)
   deck = read_deck(deck_path)
   render_pdf_from_inputs(library_dict, deck, template_path, output)
