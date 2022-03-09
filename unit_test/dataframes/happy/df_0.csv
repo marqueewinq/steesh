@@ -1,0 +1,15 @@
+ID,Name,Type,Qty,Module,Cost,Power,Text,Image,Tags,Version Tag
+5,Healer Dork,Creature,2,Nature,1,1,"Whenever another permanent you control enters, gain 1 life.
+Action, tap, pay 1 life: gain 1 mana; Priority.",https://99px.ru/sstorage/56/2013/06/10306130220478230.jpg,"Heal, Mana, PayLife, Ability",1
+14,Regrowth,Action,1,Nature,1,-,"Fuel -- return target card from your discard to your hand.
+Choose two (you can choose each mode multiple times):
+ - return target card from any discard to it's owner's hand;
+ - remove target card from any discard.",https://c4.wallpaperflare.com/wallpaper/773/817/71/green-light-sake-girl-wallpaper-preview.jpg,"Fuel, Recursion, Gravehate",3
+38,Golem Liquidator,Creature,2,Ice,X,X+1,"During the upkeep, ~ gets +1 power.
+Action, kill ~: search for a Object with mana cost less than his power.",-,"Ability, PowerCounter, SearchToPlay",2
+50,Vicious Reaction,Object,1,Burn,4,-,"Double the damage dealt by cards you control.
+Action, tap: deal 1 damage to each opponent.",-,"DamageToOpponent, Ability, SpecialRule",1
+80,Paincatcher,Reaction,2,Veil,1,-,"Trigger: a player loses life.
+Draw that many cards.",-,Draw,1
+73,Thorn,Action,1,Veil,0,-,"~ deals 1 damage to any target.
+When a Creature dies, return ~ to hand.",-,DamageToAny,5

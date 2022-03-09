@@ -1,0 +1,12 @@
+<body style='margin: 0; padding: 0;'>
+
+    <table style='border-collapse: collapse;'>
+        {% for row in cards %}
+        <TR style="width: 89mm;">
+            {% for card in row %}
+        <TD style="width: 64mm; border: 1px solid black;">{{card}}</TD>
+            {% endfor %}
+        </TR>
+        {% endfor %}
+    </table>
+<body/>
