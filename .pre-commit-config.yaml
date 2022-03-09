@@ -27,5 +27,6 @@ repos:
     hooks:
     - id: mypy
       name: mypy-strict
+      exclude: '^unit_test'
       args: ["--config-file=tox.ini", "--strict", "--implicit-reexport", "--allow-any-generics"]
       additional_dependencies: [tokenize-rt==3.2.0]
