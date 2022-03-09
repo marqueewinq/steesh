@@ -79,7 +79,6 @@ def read_deck(path: str) -> List:
         for ind_and_line in enumerate(deck.readlines()):
 
             mtch = re.search(r"(\d+) (.*)$", ind_and_line[1])
-            print(mtch)
             if mtch:
                 ret_lst.append(mtch.groups())
 
