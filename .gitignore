@@ -1,3 +1,4 @@
 env
 out.pdf
 dataframes/test_dataframe.xlsx
+__pycache__

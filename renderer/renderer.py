@@ -51,7 +51,10 @@ def read_library(path: str) -> Dict:
         )
     elif path.endswith(".csv"):
         rows = csv.reader(open(path))
-        keys = [cell.replace(" ", "_") for cell in next(rows)]
+        try:
+            keys = [cell.replace(" ", "_") for cell in next(rows)]
+        except StopIteration:
+            raise ValueError("Library is empty")
         list_of_cards_dicts = list(
             map(
                 lambda row: dict(
