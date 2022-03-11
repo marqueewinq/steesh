@@ -33,6 +33,7 @@ jobs:
           python -m pip install --upgrade pip
       - id: cache-pip
         uses: actions/cache@v1
+        continue-on-error: true
         with:
           path: ${{ env.PYTHON_ENV_PATH }}
           key: ${{ runner.os }}-venv-${{ hashFiles('**/requirements*.txt') }}
