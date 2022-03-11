@@ -381,7 +381,6 @@ def test_read_lib_happy(df_path, expected):
     assert read_library(df_path) == expected
 
 
-@pytest.mark.timeout(10)
 @pytest.mark.parametrize(
     "df_path,deck_path",
     [
