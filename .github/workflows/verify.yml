@@ -29,7 +29,7 @@ jobs:
           python-version: "3.6"
       - name: Install dependencies
         run: |
-          apt-get update && apt-get install -y wkhtmltopdf
+          sudo apt-get update && sudo apt-get install -y wkhtmltopdf
           python -m pip install --upgrade pip
       - id: cache-pip
         uses: actions/cache@v1
