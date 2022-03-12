@@ -5,7 +5,7 @@ from math import ceil
 import pytest
 from PyPDF2 import PdfFileReader
 
-from renderer.renderer import read_deck, read_library, render_page_cli
+from steesh.renderer.renderer import read_deck, read_library, render_page_cli
 
 
 @pytest.mark.parametrize(
@@ -394,7 +394,7 @@ def test_render_page_cli_happy(df_path, deck_path):
         render_page_cli(
             df_path,
             deck_path,
-            "templates/test_card_template.html",
+            "examples/templates/test_card_template.html",
             os.path.join(td, "out.pdf"),
         )
         assert PdfFileReader(os.path.join(td, "out.pdf")).getNumPages() == ceil(
@@ -413,5 +413,5 @@ def test_render_page_cli_happy(df_path, deck_path):
 def test_render_page_cli_card_not_in_lib(df_path, deck_path):
     with pytest.raises(ValueError):
         render_page_cli(
-            df_path, deck_path, "templates/test_card_template.html", "out.pdf"
+            df_path, deck_path, "examples/templates/test_card_template.html", "out.pdf"
         )

@@ -101,7 +101,7 @@ def render_card_html(library_dict: dict, template_file: str) -> Text:
 
 
 def render_table_html(
-    cards_table: List, template_file: str = "templates/table_template.html"
+    cards_table: List, template_file: str = "steesh/templates/table_template.html"
 ) -> Text:
     template = templateEnv.get_template(template_file)
     return template.render(cards=cards_table)
@@ -161,9 +161,9 @@ def render_pdf_from_html_tables(html_tables_list: List, output: str) -> None:
 
 
 def render_page_cli(
-    library_path: str = "dataframes/test_dataframe.csv",
-    deck_path: str = "decks/test_deck.txt",
-    template_path: str = "templates/test_card_template.html",
+    library_path: str = "examples/dataframes/test_dataframe.csv",
+    deck_path: str = "examples/decks/test_deck.txt",
+    template_path: str = "examples/templates/test_card_template.html",
     output: str = "out.pdf",
 ) -> None:
     library_dict = read_library(library_path)
