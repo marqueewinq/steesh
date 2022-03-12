@@ -381,6 +381,7 @@ def test_read_lib_happy(df_path, expected):
     assert read_library(df_path) == expected
 
 
+@pytest.mark.pdf
 @pytest.mark.parametrize(
     "df_path,deck_path",
     [
@@ -401,6 +402,7 @@ def test_render_page_cli_happy(df_path, deck_path):
         )
 
 
+@pytest.mark.pdf
 @pytest.mark.parametrize(
     "df_path,deck_path",
     [
