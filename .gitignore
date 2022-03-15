@@ -1,4 +1,5 @@
 env
 out.pdf
-dataframes/test_dataframe.xlsx
 __pycache__
+examples/dataframes/test_dataframe.xlsx
+.pytest_cache
