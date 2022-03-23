@@ -1,0 +1,13 @@
+version: '3'
+services:
+  flask:
+    build: ./
+    container_name: steesh
+    environment:
+      - FLASK_ENV=development
+    restart: on-failure
+    volumes:
+      - ./:/steesh/backend
+    ports:
+      - "5000:5000"
+    command: python steesh/api/app.py

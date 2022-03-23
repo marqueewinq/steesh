@@ -1,6 +1,7 @@
-jinja2==2.11.3
+jinja2==3.0.3
 fire==0.4.0
 pre-commit==2.17.0
 PyPDF2==1.26.0
 openpyxl==3.0.9
 pdfkit==1.0.0
+flask==2.0.3
