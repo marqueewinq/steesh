@@ -1,6 +1,6 @@
 version: '3'
 services:
-  flask:
+  steesh:
     build: ./
     container_name: steesh
     environment:
