@@ -79,16 +79,14 @@ def read_deck(path: str) -> List:
     ret_lst = []
     check_if_file(path)
     with open(path, "r") as deck:
-        for ind_and_line in enumerate(deck.readlines()):
+        for ind, line in enumerate(deck.readlines()):
 
-            mtch = re.search(r"(\d+) (.*)$", ind_and_line[1])
+            mtch = re.search(r"(\d+) (.*)$", line)
             if mtch:
                 ret_lst.append(mtch.groups())
 
             else:
-                raise ValueError(
-                    f'Wrong input format in file "{path}" in line {ind_and_line[0]}'
-                )
+                raise ValueError(f'Wrong input format in file "{path}" in line {ind}')
 
     if not ret_lst:
         raise ValueError("Deck is empty")
@@ -138,10 +136,10 @@ def generate_tables_of_cards(
 def render_pdf_from_html_tables(html_tables_list: List, output: str) -> None:
     with tempfile.TemporaryDirectory() as td:
         pdfs = []
-        for ind_and_table in enumerate(html_tables_list):
+        for ind, table in enumerate(html_tables_list):
             pdfkit.from_string(
-                ind_and_table[1],
-                os.path.join(td, f"{ind_and_table[0]}out.pdf"),
+                table,
+                os.path.join(td, f"{ind}out.pdf"),
                 options={
                     "--margin-bottom": "0mm",
                     "--margin-left": "0mm",
@@ -149,7 +147,7 @@ def render_pdf_from_html_tables(html_tables_list: List, output: str) -> None:
                     "--margin-top": "0mm",
                 },
             )
-            pdfs.append(os.path.join(td, f"{ind_and_table[0]}out.pdf"))
+            pdfs.append(os.path.join(td, f"{ind}out.pdf"))
 
         merger = PdfFileMerger()
 
