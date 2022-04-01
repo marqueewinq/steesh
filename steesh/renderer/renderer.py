@@ -75,22 +75,25 @@ def read_library(path: str) -> Dict:
     return dd
 
 
-def read_deck(path: str) -> List:
+def read_deck_from_str(deck: List[str], path: str = "") -> List:
     ret_lst = []
-    check_if_file(path)
-    with open(path, "r") as deck:
-        for ind, line in enumerate(deck.readlines()):
+    for ind, line in enumerate(deck):
 
-            mtch = re.search(r"(\d+) (.*)$", line)
-            if mtch:
-                ret_lst.append(mtch.groups())
+        mtch = re.search(r"(\d+) (.*)$", line)
+        if mtch:
+            ret_lst.append(mtch.groups())
 
-            else:
-                raise ValueError(f'Wrong input format in file "{path}" in line {ind}')
-
+        else:
+            raise ValueError(f'Wrong input format in file "{path}" in line {ind}')
     if not ret_lst:
         raise ValueError("Deck is empty")
     return ret_lst
+
+
+def read_deck(path: str) -> List:
+    check_if_file(path)
+    with open(path, "r") as deck:
+        return read_deck_from_str(deck.readlines(), path)
 
 
 def render_card_html(library_dict: dict, template_file: str) -> Text:
@@ -131,6 +134,29 @@ def generate_tables_of_cards(
     cards_list += [""] * ((9 - len(cards_list) % 9) % 9)
     cards_table = get_sliced_lst(get_sliced_lst(cards_list))
     return cards_table
+
+
+def api_render_html(
+    library_path: str,
+    deck: List[str],
+    template_path: str = "examples/templates/test_card_template.html",
+) -> Text:
+    return (
+        "<ul>\n<li>"
+        + "</li>\n<li>".join(
+            list(
+                map(
+                    render_table_html,
+                    generate_tables_of_cards(
+                        read_library(library_path),
+                        read_deck_from_str(deck),
+                        template_path,
+                    ),
+                )
+            )
+        )
+        + "</li>\n</ul>"
+    )
 
 
 def render_pdf_from_html_tables(html_tables_list: List, output: str) -> None:

@@ -10,4 +10,4 @@ services:
       - ./:/steesh/backend
     ports:
       - "5000:5000"
-    command: python steesh/api/app.py
+    command: python -m steesh.api.app
