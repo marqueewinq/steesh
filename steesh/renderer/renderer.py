@@ -7,7 +7,7 @@ from typing import Dict, List, Text
 import fire
 import jinja2
 import openpyxl
-import pdfkit
+import weasyprint
 from PyPDF2 import PdfFileMerger
 
 templateLoader = jinja2.FileSystemLoader(searchpath="./")
@@ -163,23 +163,13 @@ def render_pdf_from_html_tables(html_tables_list: List, output: str) -> None:
     with tempfile.TemporaryDirectory() as td:
         pdfs = []
         for ind, table in enumerate(html_tables_list):
-            pdfkit.from_string(
-                table,
-                os.path.join(td, f"{ind}out.pdf"),
-                options={
-                    "--margin-bottom": "0mm",
-                    "--margin-left": "0mm",
-                    "--margin-right": "0mm",
-                    "--margin-top": "0mm",
-                },
+            open(os.path.join(td, f"{ind}out.pdf"), "wb").write(
+                weasyprint.HTML(string=table).write_pdf()
             )
             pdfs.append(os.path.join(td, f"{ind}out.pdf"))
-
         merger = PdfFileMerger()
-
         for pdf in pdfs:
-            merger.append(pdf)
-
+            merger.append(pdf, import_bookmarks=False)
         merger.write(output)
         merger.close()
 
