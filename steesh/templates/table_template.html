@@ -1,10 +1,18 @@
 <body style='margin: 0; padding: 0;'>
+<style>
+@page {
+size: A4;
+margin: 0mm;
 
-    <table style='border-collapse: collapse;'>
+}
+</style>
+    <table style='border-collapse: collapse; table-layout:fixed; width:192mm; height:167mm;'>
         {% for row in cards %}
-        <TR style="width: 89mm;">
+        <TR style="width: 64mm;">
             {% for card in row %}
-        <TD style="width: 64mm; border: 1px solid black;">{{card}}</TD>
+                <TD style="border: 1px solid black; overflow:hidden;">
+                    <div style="height:89mm; float: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{card}}</div>
+                </TD>
             {% endfor %}
         </TR>
         {% endfor %}
