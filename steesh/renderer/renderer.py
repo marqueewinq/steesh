@@ -136,29 +136,6 @@ def generate_tables_of_cards(
     return cards_table
 
 
-def api_render_html(
-    library_path: str,
-    deck: List[str],
-    template_path: str = "examples/templates/test_card_template.html",
-) -> Text:
-    return (
-        "<ul>\n<li>"
-        + "</li>\n<li>".join(
-            list(
-                map(
-                    render_table_html,
-                    generate_tables_of_cards(
-                        read_library(library_path),
-                        read_deck_from_str(deck),
-                        template_path,
-                    ),
-                )
-            )
-        )
-        + "</li>\n</ul>"
-    )
-
-
 def render_pdf_from_html_tables(html_tables_list: List, output: str) -> None:
     with tempfile.TemporaryDirectory() as td:
         pdfs = []

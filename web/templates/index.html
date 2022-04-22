@@ -114,6 +114,10 @@ max-width: 500px;
 margin: auto;
 margin-bottom: 30px;
 }
+.red-text {
+  color: red
+
+}
 ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
   color: rgb(0, 0, 0);
   opacity: 0.6;
@@ -159,6 +163,15 @@ margin-bottom: 30px;
           <button type="submit">Get html</button>
         </div>
       </form>
+      <div class="red-text form-group">
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+              {{ message }}
+            {% endfor %}
+        {% endif %}
+      {% endwith %}
+      </div>
     </div>
   </body>
 </html>
