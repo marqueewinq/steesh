@@ -1,5 +1,6 @@
 import os
 
+import pytest
 from playwright.sync_api import sync_playwright
 
 from unit_test.static_text import deck_contains_empty_lines_response, happy_response
@@ -19,6 +20,7 @@ def get_content(deck, library_path):
         return page.content()
 
 
+@pytest.mark.integration
 def test_happy():
     assert (
         get_content(
@@ -31,6 +33,7 @@ def test_happy():
     )
 
 
+@pytest.mark.integration
 def test_error_flash():
     assert (
         get_content(
