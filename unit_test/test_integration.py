@@ -1,6 +1,8 @@
 import os
 
 import pytest
+
+playwright = pytest.importorskip("playwright")
 from playwright.sync_api import sync_playwright
 
 from unit_test.static_text import deck_contains_empty_lines_response, happy_response
