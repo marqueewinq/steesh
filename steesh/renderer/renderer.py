@@ -2,16 +2,22 @@ import csv
 import os
 import re
 import tempfile
-from typing import Dict, List, Text
 
 import fire
-import jinja2
 import openpyxl
 import weasyprint
+from jinja2 import Template
 from PyPDF2 import PdfFileMerger
 
-templateLoader = jinja2.FileSystemLoader(searchpath="./")
-templateEnv = jinja2.Environment(loader=templateLoader)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+TEMPLATE_TABLE_PATH = os.path.join(BASE_DIR, "templates/table_template.html")
+
+
+def get_template(template_path: str) -> Template:
+    with open(template_path, "r") as f:
+        template = Template(f.read())
+    return template
 
 
 def check_if_file(path: str) -> None:
@@ -21,7 +27,7 @@ def check_if_file(path: str) -> None:
         raise FileNotFoundError(f'File "{path}" not found')
 
 
-def read_library(path: str) -> Dict:
+def read_library(path: str) -> dict:
     list_of_cards_dicts = []
     check_if_file(path)
     if path.endswith(".xlsx"):
@@ -75,39 +81,39 @@ def read_library(path: str) -> Dict:
     return dd
 
 
-def read_deck(path: str) -> List:
+def read_deck_from_str(deck: list[str], path: str = "") -> list:
     ret_lst = []
-    check_if_file(path)
-    with open(path, "r") as deck:
-        for ind_and_line in enumerate(deck.readlines()):
+    for ind, line in enumerate(deck):
 
-            mtch = re.search(r"(\d+) (.*)$", ind_and_line[1])
-            if mtch:
-                ret_lst.append(mtch.groups())
-
-            else:
-                raise ValueError(
-                    f'Wrong input format in file "{path}" in line {ind_and_line[0]}'
-                )
-
+        mtch = re.search(r"(\d+) (.*)$", line)
+        if mtch:
+            ret_lst.append(mtch.groups())
+        else:
+            raise ValueError(f'Wrong input format in file "{path}" in line {ind}')
     if not ret_lst:
         raise ValueError("Deck is empty")
     return ret_lst
 
 
-def render_card_html(library_dict: dict, template_file: str) -> Text:
-    template = templateEnv.get_template(template_file)
+def read_deck(path: str) -> list:
+    check_if_file(path)
+    with open(path, "r") as deck:
+        return read_deck_from_str(deck.readlines(), path)
+
+
+def render_card_html(library_dict: dict, template_file: str) -> str:
+    template = get_template(template_file)
     return template.render(**library_dict)
 
 
 def render_table_html(
-    cards_table: List, template_file: str = "steesh/templates/table_template.html"
-) -> Text:
-    template = templateEnv.get_template(template_file)
+    cards_table: list, template_file: str = TEMPLATE_TABLE_PATH
+) -> str:
+    template = get_template(template_file)
     return template.render(cards=cards_table)
 
 
-def get_sliced_lst(lst: List) -> List[List]:
+def get_sliced_lst(lst: list) -> list[list]:
     sliced_lst = []
     i = -1
     for i in range(len(lst) // 3):
@@ -119,8 +125,8 @@ def get_sliced_lst(lst: List) -> List[List]:
 
 
 def generate_tables_of_cards(
-    library_dict: dict, deck: List, template_path: Text
-) -> List[List]:
+    library_dict: dict, deck: list, template_path: str
+) -> list[list]:
     cards_jinja_dicts = []
     for card in deck:
         try:
@@ -135,7 +141,7 @@ def generate_tables_of_cards(
     return cards_table
 
 
-def render_pdf_from_html_tables(html_tables_list: List, output: str) -> None:
+def render_pdf_from_html_tables(html_tables_list: list, output: str) -> None:
     with tempfile.TemporaryDirectory() as td:
         pdfs = []
         for ind, table in enumerate(html_tables_list):
@@ -162,7 +168,7 @@ def render_page_cli(
 
 
 def render_pdf_from_inputs(
-    library_dict: dict, deck: List, template_path: str, output: str
+    library_dict: dict, deck: list, template_path: str, output: str
 ) -> None:
     render_pdf_from_html_tables(
         list(

@@ -16,15 +16,17 @@ repos:
         exclude: ^.helm
     -   id: end-of-file-fixer
     -   id: trailing-whitespace
+        exclude: unit_test/static_text.py
     -   id: mixed-line-ending
     -   id: requirements-txt-fixer
 -   repo: https://gitlab.com/pycqa/flake8
     rev: '3.8.3'
     hooks:
     - id: flake8
+      exclude: unit_test/static_text.py
       args: ["--config=tox.ini", "--tee"]
 -   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v0.790
+    rev: v0.800
     hooks:
     - id: mypy
       name: mypy-strict
