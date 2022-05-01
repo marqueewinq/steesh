@@ -5,9 +5,16 @@ services:
     container_name: steesh
     environment:
       - FLASK_ENV=development
+      - STEESH_DEBUG=1
     restart: on-failure
     volumes:
       - ./:/steesh/backend
     ports:
       - "5000:5000"
     command: python -m steesh.api.app
+    healthcheck:
+      test: "curl 0.0.0.0:5000/"
+      interval: "10s"
+      timeout: "3s"
+      start_period: "1s"
+      retries: 3

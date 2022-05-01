@@ -2,6 +2,5 @@ fire==0.4.0
 flask==2.0.3
 jinja2==3.0.3
 openpyxl==3.0.9
-pre-commit==2.17.0
 PyPDF2==1.26.0
 weasyprint==54.3
