@@ -1,5 +1,7 @@
 # print-and-play
 
+[![Verify](https://github.com/marqueewinq/steesh/actions/workflows/verify.yml/badge.svg)](https://github.com/marqueewinq/steesh/actions/workflows/verify.yml)
+
 CSV to printable pdf converter
 
 ## Development
