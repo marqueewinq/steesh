@@ -6,6 +6,7 @@ services:
     environment:
       - FLASK_ENV=development
       - STEESH_DEBUG=1
+      - HEROKU_APP_NAME=steesh-app
     restart: on-failure
     volumes:
       - ./:/steesh/backend
