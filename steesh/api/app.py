@@ -47,4 +47,4 @@ def index() -> Any:
 
 if __name__ == "__main__":
     debug = bool(os.environ.get("STEESH_DEBUG", False))
-    app.run(host="0.0.0.0", debug=debug)
+    app.run(host="0.0.0.0", debug=debug, port=os.environ.get("PORT", 5000))
