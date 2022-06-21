@@ -1,7 +1,6 @@
-2 Healer Dork
+1 Healer Dork
 1 Regrowth
-2 Healer Dork
-1 Regrowth
-2 Healer Dork
-1 Regrowth
-8 Vicious Reaction
+1 Golem LiquidatorLiquidatorLiquidator
+1 Vicious Reaction
+1 Paincatcher
+1 Thorn

@@ -1,0 +1,39 @@
+<style>
+    table {
+        border-collapse: collapse;
+        table-layout:fixed;
+
+    }
+    td {
+        border: 1px solid black;
+        overflow:hidden;
+    }
+    table, td, th {
+      border-collapse: collapse;
+      border: 1px solid #000;
+    }
+    table + table, table + table tr:first-child th, table + table tr:first-child td {
+        border-top: 0;
+    }
+
+
+</style>
+
+<table style='height:38mm; width: 60mm;'>
+  <colgroup>
+    <col style='width:18mm;'>
+    <col style='width:27mm;'>
+    <col style='width:15mm;'>
+  </colgroup>
+  <tr><td rowspan="2" style='height:18mm; font-size: 56px; text-align: center;'>{{Cost}}</td><td nowrap style='width:42mm; font-size:{{name_font_size}};' colspan="2" ><div style="height: 9mm; overflow:hidden;">{{Name}}</div></td></tr>
+  <tr><td nowrap style='font-size:{{module_font_size}};'><div style="height: 9mm; overflow:hidden;">{{Module}}</div></td><td nowrap style='font-size:{{n_v_font_size}};'>N{{ID}}V{{Version_Tag}}</td></tr>
+  <tr> <td colspan="3" style='height:20mm; background-size: 100% 100%; background-image: url({{Image}}); background-repeat: no-repeat;'>heh</td></tr>
+</table>
+<table style='width:calc(60mm + 10px); table-layout:fixed;'>
+  <colgroup>
+    <col style='width:11mm;'>
+    <col style='width:48.2mm;'>
+  </colgroup>
+  <tr><td style='height:11mm; width:11mm; font-size:{{power_font_size}}; overflow:hidden; vertical-align: middle; text-align: center;'>{{Power}}</td><td nowrap style='font-size:{{type_font_size}};'><div style="height: 11mm; overflow:hidden;">{{Type}}</div></td></tr>
+  <tr><td colspan="2" style='overflow-wrap: break-word; font-size:{% if text_font_size %}{{text_font_size}}{% else %}9mm{% endif %};'><div style="height: 37mm; white-space: pre-wrap; width:60mm;">{{Text}}</div></td></tr>
+</table>
