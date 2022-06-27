@@ -1,7 +1,9 @@
 import csv
 import os
 import re
+import string
 import tempfile
+from typing import Callable, List, Tuple
 
 import fire
 import openpyxl
@@ -101,7 +103,65 @@ def read_deck(path: str) -> list:
         return read_deck_from_str(deck.readlines(), path)
 
 
+def getApproximateArialStringWidth(st: str) -> float:
+    size = 0  # in milinches
+    for s in st:
+        if s in "lij|' ":
+            size += 37
+        elif s in "![]fI.,:;/\\t":
+            size += 50
+        elif s in '`-(){}r"':
+            size += 60
+        elif s in "*^zcsJkvxy":
+            size += 85
+        elif s in "aebdhnopqug#$L+<>=?_~FZT" + string.digits:
+            size += 95
+        elif s in "BSPEAKVXY&UwNRCHD":
+            size += 112
+        elif s in "QGOMm%W@":
+            size += 135
+        else:
+            size += 50
+    return size * 25.4 / 1000.0
+
+
+def setup_dynamic_fontsize(library_dict: dict) -> None:
+    needs_dynamic_fonts: List[Tuple[str, Callable, int, int]] = [
+        ("name_font_size", (lambda Name, **kwargs: Name), 42, 9),
+        ("module_font_size", (lambda Module, **kwargs: Module), 27, 9),
+        (
+            "n_v_font_size",
+            (lambda ID, Version_Tag, **kwargs: f"N{ID}V{Version_Tag}"),
+            15,
+            9,
+        ),
+        ("power_font_size", (lambda Power, **kwargs: Power), 11, 11),
+        ("type_font_size", (lambda Type, **kwargs: Type), 49, 11),
+        ("text_font_size", (lambda Text, **kwargs: Text), 60, 37),
+    ]
+
+    for name, f, width, height in needs_dynamic_fonts:
+        lens = list(
+            map(getApproximateArialStringWidth, str(f(**library_dict)).split("\n"))
+        )
+        max_len = max(lens)
+        sum_len = sum(lens) / 2
+        try:
+            # library_dict[name]=f'{min((width/(0.29*(max_len))), 11)}mm'
+            c = 0
+            k = min(
+                -c / 2 + (width * height / sum_len + c * c / 4) ** (1 / 2)
+                if name == "text_font_size"
+                else (width / (0.29 * (max_len))),
+                9,
+            )
+            library_dict[name] = f"{k}mm"
+        except ZeroDivisionError:
+            library_dict[name] = "9mm"
+
+
 def render_card_html(library_dict: dict, template_file: str) -> str:
+    setup_dynamic_fontsize(library_dict)
     template = get_template(template_file)
     return template.render(**library_dict)
 
@@ -159,7 +219,7 @@ def render_pdf_from_html_tables(html_tables_list: list, output: str) -> None:
 def render_page_cli(
     library_path: str = "examples/dataframes/test_dataframe.csv",
     deck_path: str = "examples/decks/test_deck.txt",
-    template_path: str = "examples/templates/test_card_template.html",
+    template_path: str = "examples/templates/test_card_template_dynamic_fontsize.html",
     output: str = "out.pdf",
 ) -> None:
     library_dict = read_library(library_path)

@@ -1,11 +1,38 @@
-<h4> {{Name}} </h4>
-<img src="{{Image}}" style='height:40px; width:40px:' />
-<p> {{Text}} </p>
-<p> {{ID}} </p>
-<p> {{Type}} </p>
-<p> {{Qty}} </p>
-<p> {{Module}} </p>
-<p> {{Cost}} </p>
-<p> {{Power}} </p>
-<p> {{Tags}} </p>
-<p> {{Version_Tag}} </p>
+<style>
+    table {
+        border-collapse: collapse;
+        table-layout:fixed;
+
+    }
+    td {
+        border: 1px solid black;
+        overflow:hidden;
+    }
+    table, td, th {
+      border-collapse: collapse;
+      border: 1px solid #000;
+    }
+    table + table, table + table tr:first-child th, table + table tr:first-child td {
+        border-top: 0;
+    }
+</style>
+
+<table style='height:38mm; width: 60mm;'>
+  <colgroup>
+    <col style='width:18mm;'>
+    <col style='width:27mm;'>
+    <col style='width:15mm;'>
+  </colgroup>
+
+  <tr><td rowspan="2" style='height:18mm; font-size: 56px; text-align: center;'>{{Cost}}</td> <td nowrap style='width:42mm; font-size:40px;' colspan="2" ><div style="height: 9mm; overflow:hidden;">{{Name}}</div></td></tr>
+  <tr><td nowrap style='font-size:10px;'>{{Module}}</td><td nowrap style='font-size:10px;'>N{{ID}}V{{Version_Tag}}</td></tr>
+  <tr> <td colspan="3" style='height:20mm; background-size: 100% 100%; background-image: url({{Image}}); background-repeat: no-repeat;'></td></tr>
+</table>
+<table style='width:calc(60mm + 10px); table-layout:fixed;'>
+  <colgroup>
+    <col style='width:11mm;'>
+    <col style='width:48.2mm;'>
+  </colgroup>
+  <tr><td style='height:11mm; width:11mm; font-size:10px;'>{{Power}}</td><td nowrap style='font-size:10px;'>{{Type}}</td></tr>
+  <tr><td colspan="2" style='height:37mm; font-size:10px;'>{{Text}}</td></tr>
+</table>
