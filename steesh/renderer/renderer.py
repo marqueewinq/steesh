@@ -141,7 +141,9 @@ def setup_dynamic_fontsize(library_dict: dict) -> None:
     ]
 
     for name, f, width, height in needs_dynamic_fonts:
-        lens = list(map(getApproximateArialStringWidth, f(**library_dict).split("\n")))
+        lens = list(
+            map(getApproximateArialStringWidth, str(f(**library_dict)).split("\n"))
+        )
         max_len = max(lens)
         sum_len = sum(lens) / 2
         try:
