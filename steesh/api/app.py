@@ -1,50 +1,106 @@
-import os
+# type: ignore
+import os.path
 import tempfile
-from typing import Any
 
-from flask import Flask, flash, redirect, render_template, request
-from werkzeug.utils import secure_filename
+from fastapi import FastAPI, File, Form, Request, UploadFile
+from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.templating import Jinja2Templates
 
-from steesh.api.utils import allowed_file, format_deck, render_response
+from steesh.renderer import (
+    TEMPLATE_TABLE_PATH,
+    generate_pdf,
+    read_deck,
+    read_library,
+    read_template,
+)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-app = Flask(
-    __name__,
-    template_folder=os.path.join(BASE_DIR, "templates/"),
+INDEX_PATH = os.path.join(BASE_DIR, "templates/index.html")
+DEFAULT_LIBRARY_PATH = os.path.join(BASE_DIR, "assets/default_library.csv")
+DEFAULT_CARD_TEMPLATE_PATH = os.path.join(
+    BASE_DIR, "templates/default_card_template.html"
 )
-app.secret_key = os.environ.get("STEESH_SECRET_KEY", os.urandom(12).hex())
+
+app = FastAPI()
+templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
 
 
-@app.route("/", methods=["GET", "POST"])
-def index() -> Any:
-    if request.method == "GET":
-        return render_template("index.html")
+@app.get("/", response_class=HTMLResponse)
+def api__index(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
 
-    if "library" not in request.files or "deck" not in request.form:
-        return "Bad request", 400
 
-    file = request.files["library"]
-    if not (file and allowed_file(file.filename)):
-        flash(
-            f"File type .{str(file.filename).rsplit('.', 1)[1].lower()} is not allowed"
-        )
-        return redirect(request.url)
+@app.get("/example/library", response_class=FileResponse)
+def api__example__library(request: Request):
+    return FileResponse(
+        DEFAULT_LIBRARY_PATH,
+        headers={"Content-Disposition": "attachment; filename=library.csv"},
+    )
 
-    with tempfile.TemporaryDirectory() as td:
-        filename = secure_filename(str(file.filename))
-        file.save(os.path.join(td, filename))
+
+@app.get("/example/template", response_class=FileResponse)
+def api__example__template(request: Request):
+    return FileResponse(
+        DEFAULT_CARD_TEMPLATE_PATH,
+        headers={"Content-Disposition": "attachment; filename=template.html"},
+    )
+
+
+@app.post("/generate-pdf/")
+async def api__generate_pdf(
+    request: Request,
+    library_file: UploadFile = File(...),
+    deck: str = Form(...),
+    template_file: UploadFile = File(None),
+    name_column: str = Form("Name"),
+    xlsx_sheet_index: int = Form(0),
+):
+    with tempfile.TemporaryDirectory() as tmpdir:
+        _, ext = os.path.splitext(library_file.filename)
+        library_path = os.path.join(tmpdir, "library." + ext)
+        with open(library_path, "wb") as fd:
+            fd.write(await library_file.read())
+
+        template_path = DEFAULT_CARD_TEMPLATE_PATH
+        if template_file is not None:
+            template_path = os.path.join(tmpdir, "template.html")
+            with open(template_path, "wb") as fd:
+                fd.write(await template_file.read())
+
+        deck = deck.replace("\\n", "\n")
+        deck_path = os.path.join(tmpdir, "deck.txt")
+        with open(deck_path, "w") as fd:
+            fd.write(deck)
 
         try:
-            html = render_response(
-                library_path=os.path.join(td, filename),
-                deck=format_deck(request.form["deck"]),
+            library = read_library(
+                library_path,
+                name_column=name_column,
+                xlsx_sheet_index=xlsx_sheet_index,
             )
-        except ValueError as e:
-            flash(f"Error while rendering: {e}")
-            return redirect(request.url)
-        return render_template("p2p.html", rendered_html=html)
+            deck = read_deck(deck_path)
+            template = read_template(template_path)
+            page_template = read_template(TEMPLATE_TABLE_PATH)
+        except Exception as e:
+            return templates.TemplateResponse(
+                "index.html", {"request": request, "messages": [str(e)]}
+            )
 
+    output_path = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False).name
+    try:
+        generate_pdf(
+            library=library,
+            deck=deck,
+            card_template=template,
+            page_template=page_template,
+            output_path=output_path,
+        )
+    except Exception as e:
+        return templates.TemplateResponse(
+            "index.html", {"request": request, "messages": [str(e)]}
+        )
 
-if __name__ == "__main__":
-    debug = bool(os.environ.get("STEESH_DEBUG", False))
-    app.run(host="0.0.0.0", debug=debug, port=os.environ.get("PORT", 5000))
+    return FileResponse(
+        output_path,
+        headers={"Content-Disposition": "attachment; filename=output.pdf"},
+    )

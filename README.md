@@ -2,9 +2,27 @@
 
 [![Verify](https://github.com/marqueewinq/steesh/actions/workflows/verify.yml/badge.svg)](https://github.com/marqueewinq/steesh/actions/workflows/verify.yml)
 
-CSV to printable pdf converter
+CSV to printable pdf converter.
+
+(demo.gif)
+
+## Usage
+
+(explain about main flow) (diagram.miro)
+
+### Customization
+
+#### Custom card template
+
+(explain about custom card template)
+
+#### Embedded images & assets
+
+(explain about images & assets)
 
 ## Development
+
+I'm happy to accept issues/PRs.
 
 ### Setup
 
@@ -25,7 +43,13 @@ pre-commit install
 4. You're all set! :rocket: Launch service locally with:
 
 ```bash
-docker-compose up --build
+docker-compose up
+```
+
+Or you can launch the server without Docker:
+
+```bash
+uvicorn steesh.api.app:app --reload
 ```
 
 ### Tests

@@ -1,0 +1,10 @@
+#!/bin/bash
+set -euxo pipefail
+
+curl -X 'POST' \
+  'http://127.0.0.1:8000/generate-pdf/' \
+  -H 'accept: */*' \
+  -F 'library_file=@/home/marqueewinq/Documents/gd/cards/pnp/library.csv;type=text/csv' \
+  -F 'deck="1   Смена Сезонов\n2   Утроба Сознания\n2   Неслучайные Мутации"' \
+  -F 'name_column="Имя"' \
+  --output out.pdf

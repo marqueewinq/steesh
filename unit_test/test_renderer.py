@@ -5,47 +5,48 @@ from math import ceil
 import pytest
 from PyPDF2 import PdfFileReader
 
-from steesh.renderer.renderer import read_deck, read_library, render_page_cli
+from steesh.renderer import generate_pdf_from_file, read_deck, read_library
+from steesh.renderer.utils import std_cell_value
 
 
 @pytest.mark.parametrize(
     "deck_path,expected",
     [
-        ("unit_test/decks/happy/deck_3.txt", [("1", "a"), ("1", "b"), ("1", "c")]),
+        ("unit_test/decks/happy/deck_3.txt", [(1, "a"), (1, "b"), (1, "c")]),
         (
             "unit_test/decks/happy/deck_4.txt",
             [
-                ("1202020200202", "sdmsfdopk"),
-                ("6789789790", "asjiasdidsa"),
-                ("980898790", "asjiasdi"),
-                ("89078998999898", "sadsadsasadkln"),
-                ("877677667", "biuashbuidsa"),
-                ("87997898", "sajiosdaioj"),
+                (1202020200202, "sdmsfdopk"),
+                (6789789790, "asjiasdidsa"),
+                (980898790, "asjiasdi"),
+                (89078998999898, "sadsadsasadkln"),
+                (877677667, "biuashbuidsa"),
+                (87997898, "sajiosdaioj"),
             ],
         ),
-        ("unit_test/decks/happy/deck_1.txt", [("2", "Healer Dork"), ("1", "Regrowth")]),
-        ("unit_test/decks/happy/deck_2.txt", [("1", "sdkmsa")]),
+        ("unit_test/decks/happy/deck_1.txt", [(2, "Healer Dork"), (1, "Regrowth")]),
+        ("unit_test/decks/happy/deck_2.txt", [(1, "sdkmsa")]),
         (
             "unit_test/decks/happy/deck_0.txt",
             [
-                ("2", "Healer Dork"),
-                ("1", "Regrowth"),
-                ("12", "Vicious Reaction"),
-                ("2", "Healer Dork"),
-                ("1", "Regrowth"),
-                ("12", "Vicious Reaction"),
-                ("2", "Healer Dork"),
-                ("1", "Regrowth"),
-                ("12", "Vicious Reaction"),
-                ("2", "Healer Dork"),
-                ("1", "Regrowth"),
-                ("12", "Vicious Reaction"),
-                ("2", "Healer Dork"),
-                ("1", "Regrowth"),
-                ("12", "Vicious Reaction"),
-                ("2", "Healer Dork"),
-                ("1", "Regrowth"),
-                ("12", "Vicious Reaction"),
+                (2, "Healer Dork"),
+                (1, "Regrowth"),
+                (12, "Vicious Reaction"),
+                (2, "Healer Dork"),
+                (1, "Regrowth"),
+                (12, "Vicious Reaction"),
+                (2, "Healer Dork"),
+                (1, "Regrowth"),
+                (12, "Vicious Reaction"),
+                (2, "Healer Dork"),
+                (1, "Regrowth"),
+                (12, "Vicious Reaction"),
+                (2, "Healer Dork"),
+                (1, "Regrowth"),
+                (12, "Vicious Reaction"),
+                (2, "Healer Dork"),
+                (1, "Regrowth"),
+                (12, "Vicious Reaction"),
             ],
         ),
     ],
@@ -170,7 +171,7 @@ def test_read_lib_empty(df_path):
                     "Qty": 1,
                     "Module": "Nature",
                     "Cost": 1,
-                    "Power": "",
+                    "Power": "-",
                     "Text": "Fuel -- return target card from your discard to your hand.\nChoose two (you can choose each mode multiple times):\n - return target card from any discard to it's owner's hand;\n - remove target card from any discard.",
                     "Image": "https://c4.wallpaperflare.com/wallpaper/773/817/71/green-light-sake-girl-wallpaper-preview.jpg",
                     "Tags": "Fuel, Recursion, Gravehate",
@@ -201,7 +202,7 @@ def test_read_lib_empty(df_path):
                     "Qty": "1",
                     "Module": "Nature",
                     "Cost": "1",
-                    "Power": "",
+                    "Power": "-",
                     "Text": "Fuel -- return target card from your discard to your hand.\nChoose two (you can choose each mode multiple times):\n - return target card from any discard to it's owner's hand;\n - remove target card from any discard.",
                     "Image": "https://c4.wallpaperflare.com/wallpaper/773/817/71/green-light-sake-girl-wallpaper-preview.jpg",
                     "Tags": "Fuel, Recursion, Gravehate",
@@ -232,7 +233,7 @@ def test_read_lib_empty(df_path):
                     "Qty": "1",
                     "Module": "Nature",
                     "Cost": "1",
-                    "Power": "",
+                    "Power": "-",
                     "Text": "Fuel -- return target card from your discard to your hand.\nChoose two (you can choose each mode multiple times):\n - return target card from any discard to it's owner's hand;\n - remove target card from any discard.",
                     "Image": "https://c4.wallpaperflare.com/wallpaper/773/817/71/green-light-sake-girl-wallpaper-preview.jpg",
                     "Tags": "Fuel, Recursion, Gravehate",
@@ -247,7 +248,7 @@ def test_read_lib_empty(df_path):
                     "Cost": "X",
                     "Power": "X+1",
                     "Text": "During the upkeep, ~ gets +1 power.\nAction, kill ~: search for a Object with mana cost less than his power.",
-                    "Image": "",
+                    "Image": "-",
                     "Tags": "Ability, PowerCounter, SearchToPlay",
                     "Version_Tag": "2",
                 },
@@ -258,9 +259,9 @@ def test_read_lib_empty(df_path):
                     "Qty": "1",
                     "Module": "Burn",
                     "Cost": "4",
-                    "Power": "",
+                    "Power": "-",
                     "Text": "Double the damage dealt by cards you control.\nAction, tap: deal 1 damage to each opponent.",
-                    "Image": "",
+                    "Image": "-",
                     "Tags": "DamageToOpponent, Ability, SpecialRule",
                     "Version_Tag": "1",
                 },
@@ -271,9 +272,9 @@ def test_read_lib_empty(df_path):
                     "Qty": "2",
                     "Module": "Veil",
                     "Cost": "1",
-                    "Power": "",
+                    "Power": "-",
                     "Text": "Trigger: a player loses life.\nDraw that many cards.",
-                    "Image": "",
+                    "Image": "-",
                     "Tags": "Draw",
                     "Version_Tag": "1",
                 },
@@ -284,9 +285,9 @@ def test_read_lib_empty(df_path):
                     "Qty": "1",
                     "Module": "Veil",
                     "Cost": "0",
-                    "Power": "",
+                    "Power": "-",
                     "Text": "~ deals 1 damage to any target.\nWhen a Creature dies, return ~ to hand.",
-                    "Image": "",
+                    "Image": "-",
                     "Tags": "DamageToAny",
                     "Version_Tag": "5",
                 },
@@ -315,7 +316,7 @@ def test_read_lib_empty(df_path):
                     "Qty": 1,
                     "Module": "Nature",
                     "Cost": 1,
-                    "Power": "",
+                    "Power": "-",
                     "Text": "Fuel -- return target card from your discard to your hand.\nChoose two (you can choose each mode multiple times):\n - return target card from any discard to it's owner's hand;\n - remove target card from any discard.",
                     "Image": "https://c4.wallpaperflare.com/wallpaper/773/817/71/green-light-sake-girl-wallpaper-preview.jpg",
                     "Tags": "Fuel, Recursion, Gravehate",
@@ -330,7 +331,7 @@ def test_read_lib_empty(df_path):
                     "Cost": "X",
                     "Power": "X+1",
                     "Text": "During the upkeep, ~ gets +1 power.\nAction, kill ~: search for a Object with mana cost less than his power.",
-                    "Image": "",
+                    "Image": "-",
                     "Tags": "Ability, PowerCounter, SearchToPlay",
                     "Version_Tag": 2,
                 },
@@ -341,9 +342,9 @@ def test_read_lib_empty(df_path):
                     "Qty": 1,
                     "Module": "Burn",
                     "Cost": 4,
-                    "Power": "",
+                    "Power": "-",
                     "Text": "Double the damage dealt by cards you control.\nAction, tap: deal 1 damage to each opponent.",
-                    "Image": "",
+                    "Image": "-",
                     "Tags": "DamageToOpponent, Ability, SpecialRule",
                     "Version_Tag": 1,
                 },
@@ -354,9 +355,9 @@ def test_read_lib_empty(df_path):
                     "Qty": 2,
                     "Module": "Veil",
                     "Cost": 1,
-                    "Power": "",
+                    "Power": "-",
                     "Text": "Trigger: a player loses life.\nDraw that many cards.",
-                    "Image": "",
+                    "Image": "-",
                     "Tags": "Draw",
                     "Version_Tag": 1,
                 },
@@ -367,9 +368,9 @@ def test_read_lib_empty(df_path):
                     "Qty": 1,
                     "Module": "Veil",
                     "Cost": 0,
-                    "Power": "",
+                    "Power": "-",
                     "Text": "~ deals 1 damage to any target.\nWhen a Creature dies, return ~ to hand.",
-                    "Image": "",
+                    "Image": "-",
                     "Tags": "DamageToAny",
                     "Version_Tag": 5,
                 },
@@ -378,7 +379,15 @@ def test_read_lib_empty(df_path):
     ],
 )
 def test_read_lib_happy(df_path, expected):
-    assert read_library(df_path) == expected
+    assert read_library(df_path) == {
+        v["Name"]: v
+        for v in list(
+            map(
+                lambda it: {k: std_cell_value(v) for k, v in it.items()},
+                expected.values(),
+            )
+        )
+    }
 
 
 @pytest.mark.pdf
@@ -389,9 +398,9 @@ def test_read_lib_happy(df_path, expected):
         ("unit_test/dataframes/happy/df_1.csv", "unit_test/decks/happy/deck_1.txt"),
     ],
 )
-def test_render_page_cli_happy(df_path, deck_path):
+def test_generate_pdf_from_file_happy(df_path, deck_path):
     with tempfile.TemporaryDirectory() as td:
-        render_page_cli(
+        generate_pdf_from_file(
             df_path,
             deck_path,
             "examples/templates/test_card_template.html",
@@ -410,8 +419,8 @@ def test_render_page_cli_happy(df_path, deck_path):
         ("unit_test/dataframes/happy/df_1.csv", "unit_test/decks/happy/deck_3.txt"),
     ],
 )
-def test_render_page_cli_card_not_in_lib(df_path, deck_path):
+def test_generate_pdf_from_file_card_not_in_lib(df_path, deck_path):
     with pytest.raises(ValueError):
-        render_page_cli(
+        generate_pdf_from_file(
             df_path, deck_path, "examples/templates/test_card_template.html", "out.pdf"
         )

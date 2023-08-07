@@ -3,3 +3,4 @@ out.pdf
 __pycache__
 examples/dataframes/test_dataframe.xlsx
 .pytest_cache
+/out/

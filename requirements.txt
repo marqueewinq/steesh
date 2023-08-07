@@ -1,6 +1,10 @@
+fastapi
 fire==0.4.0
 flask==2.0.3
+imgkit==1.2.3
 jinja2==3.0.3
 openpyxl==3.0.9
 PyPDF2==1.27.5
+python-multipart
+uvicorn
 weasyprint==54.3

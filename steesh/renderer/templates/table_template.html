@@ -3,7 +3,8 @@
 @page {
 size: A4;
 margin: 0mm;
-
+margin-top: 3mm;
+margin-left: 3mm;
 }
 </style>
     <table style='border-collapse: collapse; table-layout:fixed; width:192mm; height:167mm;'>
@@ -11,7 +12,7 @@ margin: 0mm;
         <TR style="width: 64mm;">
             {% for card in row %}
                 <TD style="border: 1px solid black; overflow:hidden;">
-                    <div style="height:89mm; float: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{card}}</div>
+                    <div style="height:89mm; float: left; overflow: hidden; text-overflow: ellipsis;">{{card}}</div>
                 </TD>
             {% endfor %}
         </TR>

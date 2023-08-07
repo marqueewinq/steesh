@@ -1,11 +1,27 @@
 import os
+import re
 
 import pytest
 
 playwright = pytest.importorskip("playwright")
 from playwright.sync_api import sync_playwright
 
-from steesh.api.utils import format_deck, render_response
+
+def render_response(library_path, deck):
+    pass
+
+
+def format_deck(deck: str) -> list[str]:
+    deck = deck.replace("\r\n", "\n")  # replace win linens
+    lines = deck.split("\n")
+    retval: list[str] = []
+    regex = re.compile(r"\d+ .*")
+    for line in lines:
+        line = line.strip()
+        if not regex.match(line):
+            continue
+        retval.append(line)
+    return retval
 
 
 def get_content(library_path, deck):

@@ -1,11 +1,53 @@
-<h4> {{Name}} </h4>
-<img src="{{Image}}" style='height:40px; width:40px:' />
-<p> {{Text}} </p>
-<p> {{ID}} </p>
-<p> {{Type}} </p>
-<p> {{Qty}} </p>
-<p> {{Module}} </p>
-<p> {{Cost}} </p>
-<p> {{Power}} </p>
-<p> {{Tags}} </p>
-<p> {{Version_Tag}} </p>
+<meta charset="UTF-8">
+
+<style>
+table {
+border-collapse: collapse;
+table-layout:fixed;
+
+}
+td {
+border: 1px solid black;
+overflow:hidden;
+}
+table, td, th {
+border-collapse: collapse;
+border: 1px solid #000;
+}
+table + table, table + table tr:first-child th, table + table tr:first-child td {
+border-top: 0;
+}
+</style>
+
+<table style='height:88mm; width: 64mm; table-layout:auto; '>
+    <colgroup>
+    <col style='width:18mm;'>
+    <col style='width:31mm;' >
+    <col style='width:15mm;'>
+    </colgroup>
+
+    <tr>
+        <!-- 88mm - 15mm = 73mm -->
+        <td rowspan="2" style='height:15mm; font-size: 50px; text-align: center;'>{{Стоимость}}</td>
+        <td nowrap style='width:42mm; font-size:16px; font-weight: bold;' colspan="2" >{{Имя}}</td>
+    </tr>
+    <tr>
+        <td nowrap style='font-size:14px;'>{{Тип}}</td>
+        <td nowrap style='font-size:12px; text-align: center;'><b>{{Сила}}</b></td>
+    </tr>
+    <tr>
+        <!-- 73 mm - 20mm = 53mm -->
+        <td colspan="3" style='height:20mm; background-size: contain; background-image: url("file:///home/marqueewinq/Documents/gd/cards/pnp/img/{{ХудКод}}.png"); background-repeat: no-repeat; background-position: center center'></td>
+<!--        <td colspan="3" style='height:0mm; background-size: 100% 100%;' placeholder='image'></td>-->
+    </tr>
+    <tr>
+        <!-- 53mm - 45mm = 8mm -->
+        <td colspan="3" style='height:48mm; font-size:12px; word-wrap: normal; vertical-align: top;'>{{Текст | safe}}</td>
+    </tr>
+    <tr>
+        <!-- last 8mm -->
+        <td style='height:3mm; font-size:9px; font-weight:bold; text-align: center; vertical-align: top;'>{{Символ}}/#{{ID}}</td>
+        <td style='font-size:9px; font-weight:bold; text-align: center; vertical-align: top;'>{{Домен}}</td>
+        <td style='font-size:9px; font-weight:bold; text-align: center; vertical-align: top;'>{{Стартовая}}</td>
+    </tr>
+</table>

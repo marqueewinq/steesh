@@ -63,8 +63,13 @@ overflow: hidden;
 }
 h1 {
 text-align: center;
-margin: 50px auto;
+margin: 20px auto;
 font-weight: 100;
+}
+h2 {
+text-align: center;
+margin: 20px auto;
+font-weight: 70;
 }
 label {
 font-weight: 500;
@@ -82,7 +87,21 @@ line-height: 1em;
 font-style: italic;
 opacity: 0.8;
 }
-.form-controll {
+footer {
+font-weight: 200;
+line-height: 1em;
+text-align: center;
+}
+.form-control-text {
+display: block;
+padding: 8px 16px;
+font-size: 16px;
+background-color: rgba(255, 255, 255, 0.2);
+border: 1px solid rgba(255, 255, 255, 0.3);
+color: rgb(0, 0, 0);
+font-weight: 200;
+}
+.form-control-textarea {
 display: block;
 padding: 8px 16px;
 width: 100%;
@@ -93,7 +112,7 @@ border: 1px solid rgba(255, 255, 255, 0.3);
 color: rgb(0, 0, 0);
 font-weight: 200;
 }
-.form-controll:focus {
+.form-control-textarea:focus {
 outline: 2px solid rgba(255, 255, 255, 0.5);
 outline: -webkit-focus-ring-color auto 5px;
 }
@@ -116,7 +135,6 @@ margin-bottom: 30px;
 }
 .red-text {
   color: red
-
 }
 ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
   color: rgb(0, 0, 0);
@@ -136,23 +154,44 @@ margin-bottom: 30px;
 </style>
 <html>
   <head>
-    <title>Center</title>
+    <title>Steesh</title>
   </head>
+<!--  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>-->
+  <script>
+$(document).ready(function() {
+  $('#library_file').on('change', function() {
+    var filePath = $(this).val();
+    var allowedExtensions = /(\.csv|\.xls|\.xlsx)$/i;
+
+    if (allowedExtensions.exec(filePath)) {
+      var extension = filePath.substring(filePath.lastIndexOf('.'));
+      // You can apply additional changes to the div based on the extension here
+      switch(extension) {
+        case '.csv':
+          $('#xlsx_sheet_index-group').hide();
+          break;
+        case '.xls':
+        case '.xlsx':
+          $('#xlsx_sheet_index-group').show(); // Show the div
+          break;
+      }
+    } else {
+      $('#file_extension').html('Invalid file extension');
+      $(this).val(''); // Clear the input
+    }
+  });
+});
+  </script>
   <body>
     <div>
-      <form action method="post" enctype='multipart/form-data' encoding='multipart/form-data'>
+      <form action="{{ url_for('api__generate_pdf') }}" method="post" enctype='multipart/form-data' enctype="multipart/form-data">
 
-        <h1><strong>Card HTML generator</strong></h1>
-
-        <div class="form-group">
-          <label for="title">Deck list</label>
-
-          <textarea name="deck" id="deck" required="required" class="form-controll", placeholder="1 Thorn&#10;5 Healer Dork&#10;3 Regrowth"></textarea>
-        </div>
+        <h1><strong>Steesh</strong></h1>
+        <h2>Cards as printable PDF</h2>
 
         <div class="form-group file-area">
               <label>Library <span>.csv or .xlsx</span></label>
-          <input type="file" name="library" required="required"/>
+          <input type="file" id="library_file" name="library_file" accept=".csv,.xls,.xlsx" required>
           <div class="file-dummy">
             <div class="success">Great, library is selected. Keep on.</div>
             <div class="default">Please select library</div>
@@ -160,18 +199,44 @@ margin-bottom: 30px;
         </div>
 
         <div class="form-group">
-          <button type="submit">Get html</button>
+          <label for="title">Deck list</label>
+          <textarea name="deck" id="deck" required="required" class="form-control-textarea", placeholder="1 Thorn&#10;5 Healer Dork&#10;3 Regrowth"></textarea>
+        </div>
+
+        <div class="form-group file-area">,
+          <label>Individual card template (optional)<span>Jinja-template as .html</span></label>
+          <input type="file" id="template_file" name="template_file" accept=".html">
+          <div class="file-dummy">
+            <div class="success">Custom template uploaded, keep going.</div>
+            <div class="default">If not selected, we'll use default</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="name_column">Name column (optional):<span class="tooltip">Which attribute is the name as in the deck?</span></label>
+          <input type="text" id="name_column" name="name_column" class="form-control-text name-column" placeholder="Name">
+        </div>
+
+        <div class="form-group" id="xlsx_sheet_index-group" style="display: none;">
+          <label for="xlsx_sheet_index">Excel sheet index (optional):<span>Which xls(x) sheet to use as library?</span></label>
+          <input type="text" id="xlsx_sheet_index" name="xlsx_sheet_index" class="form-control-text" placeholder="0">
+        </div>
+
+        <div class="form-group">
+          <button type="submit">Get PDF</button>
         </div>
       </form>
-      <div class="red-text form-group">
-      {% with messages = get_flashed_messages() %}
+      <div class="red-text form-group"?>
         {% if messages %}
             {% for message in messages %}
               {{ message }}
             {% endfor %}
         {% endif %}
-      {% endwith %}
       </div>
     </div>
+  <footer>
+    <p>Download <a href="{{ url_for('api__example__library') }}">example library</a> as CSV</p>
+    <p>Download <a href="{{ url_for('api__example__template') }}">example card template</a> as Jinja-template html</p>
+  </footer>
   </body>
 </html>
