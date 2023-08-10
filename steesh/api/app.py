@@ -1,9 +1,11 @@
 # type: ignore
 import os.path
 import tempfile
+import zipfile
 
 from fastapi import FastAPI, File, Form, Request, UploadFile
 from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from steesh.renderer import (
@@ -23,6 +25,7 @@ DEFAULT_CARD_TEMPLATE_PATH = os.path.join(
 
 app = FastAPI()
 templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
+app.mount("/static", StaticFiles(directory="steesh/api/assets/"), name="static")
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -52,6 +55,7 @@ async def api__generate_pdf(
     library_file: UploadFile = File(...),
     deck: str = Form(...),
     template_file: UploadFile = File(None),
+    assets_file: UploadFile = File(None),
     name_column: str = Form("Name"),
     xlsx_sheet_index: int = Form(0),
 ):
@@ -71,6 +75,12 @@ async def api__generate_pdf(
         deck_path = os.path.join(tmpdir, "deck.txt")
         with open(deck_path, "w") as fd:
             fd.write(deck)
+
+        zipfile_path = os.path.join(tmpdir, "assets.zip")
+        with open(zipfile_path, "wb") as fd:
+            fd.write(await assets_file.read())
+        with zipfile.ZipFile(zipfile_path) as zipped:
+            zipped.extractall(path=tmpdir)
 
         try:
             library = read_library(

@@ -98,7 +98,7 @@ def read_deck_from_str(deck: list[str], path: str = "") -> list:
             card_count, card_name = mtch.groups()
             ret_lst.append((int(card_count), card_name))
         else:
-            raise ValueError(f"Line {ind}: couldn't parse: {line}")
+            continue
     if not ret_lst:
         raise ValueError("Deck is empty")
     return ret_lst
